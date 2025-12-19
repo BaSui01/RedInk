@@ -25,9 +25,9 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# 检查 docker-compose 是否安装
-if ! command -v docker-compose &> /dev/null; then
-    echo -e "${RED}错误: docker-compose 未安装${NC}"
+# 检查 docker compose 是否可用
+if ! docker compose version &> /dev/null; then
+    echo -e "${RED}错误: docker compose 未安装${NC}"
     exit 1
 fi
 
@@ -43,11 +43,11 @@ docker pull $IMAGE_NAME
 
 # 停止并删除旧容器
 echo -e "${YELLOW}停止旧容器...${NC}"
-docker-compose down
+docker compose down
 
 # 启动新容器
 echo -e "${YELLOW}启动新容器...${NC}"
-docker-compose up -d
+docker compose up -d
 
 # 等待容器启动
 echo -e "${YELLOW}等待容器启动...${NC}"
@@ -56,10 +56,10 @@ sleep 5
 # 检查容器状态
 if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
     echo -e "${GREEN}✅ 容器启动成功！${NC}"
-    docker-compose ps
+    docker compose ps
 else
     echo -e "${RED}❌ 容器启动失败！${NC}"
-    docker-compose logs --tail=50
+    docker compose logs --tail=50
     exit 1
 fi
 
@@ -69,7 +69,7 @@ docker image prune -f
 
 # 显示容器日志
 echo -e "${GREEN}=== 最近的日志 ===${NC}"
-docker-compose logs --tail=20
+docker compose logs --tail=20
 
 echo -e "${GREEN}=== 部署完成 ===${NC}"
 echo -e "${YELLOW}结束时间: $(date)${NC}"
