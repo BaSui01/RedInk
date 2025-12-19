@@ -6,7 +6,7 @@
 set -e
 
 DOMAIN="redink.mengqilong.com"
-EMAIL="your-email@example.com"  # 请替换为你的邮箱
+EMAIL="bausi0103@gmail.com"
 
 echo "🔐 RedInk SSL 证书配置脚本"
 echo "域名: $DOMAIN"
