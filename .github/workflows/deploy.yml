@@ -56,6 +56,18 @@ jobs:
               sudo nginx -t && sudo systemctl reload nginx || echo "⚠️ Nginx 配置需要手动检查"
             fi
             
+            # 检查并获取 SSL 证书（首次部署）
+            if [ ! -d "/etc/letsencrypt/live/redink.mengqilong.com" ]; then
+              echo "🔒 检测到未配置 SSL 证书，开始自动获取..."
+              chmod +x deployment/setup-ssl.sh
+              sudo ./deployment/setup-ssl.sh || echo "⚠️ SSL 证书获取失败，请手动运行: sudo ./deployment/setup-ssl.sh"
+            else
+              echo "✅ SSL 证书已存在，跳过获取"
+              # 检查证书有效期
+              CERT_EXPIRY=$(sudo certbot certificates 2>/dev/null | grep "Expiry Date" | grep "redink.mengqilong.com" -A 1 | tail -1 || echo "未知")
+              echo "📅 证书到期时间: $CERT_EXPIRY"
+            fi
+            
             # 构建 Docker 镜像
             echo "🏗️ 构建 Docker 镜像..."
             docker build -t redink:latest .
