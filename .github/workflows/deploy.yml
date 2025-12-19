@@ -46,6 +46,16 @@ jobs:
               cd redink
             fi
             
+            # 检查并配置 Nginx（首次部署）
+            if [ ! -f "/etc/nginx/sites-available/redink.conf" ]; then
+              echo "🔧 配置 Nginx..."
+              sudo cp deployment/nginx-redink.conf /etc/nginx/sites-available/redink.conf
+              sudo ln -sf /etc/nginx/sites-available/redink.conf /etc/nginx/sites-enabled/redink.conf
+              
+              # 测试并重载 Nginx
+              sudo nginx -t && sudo systemctl reload nginx || echo "⚠️ Nginx 配置需要手动检查"
+            fi
+            
             # 构建 Docker 镜像
             echo "🏗️ 构建 Docker 镜像..."
             docker build -t redink:latest .
